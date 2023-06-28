@@ -73,11 +73,9 @@ public class PostService {
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         postEntities.forEach(postEntity -> postResponseDtoList.add(new PostResponseDto(postEntity)));
 
-        List<CommentResponseDto> commentResponseDtoList = this.getCommentResponseDtoList();
-
         // postId로 각 게시글에 달린 댓글 찾아 postResponseDto에 add 해주기.
         for (PostResponseDto postResponseDto : postResponseDtoList) {
-            for (CommentResponseDto commentResponseDto : commentResponseDtoList) {
+            for (CommentResponseDto commentResponseDto : this.getCommentResponseDtoList()) {
                 if (postResponseDto.getPostId()==commentResponseDto.getPostId()){
                     postResponseDto.addCommentResponseDtoList(commentResponseDto);
                 }
@@ -104,8 +102,7 @@ public class PostService {
 
         PostResponseDto postResponseDto = new PostResponseDto(postEntity);
 
-        List<CommentResponseDto> commentResponseDtoList = this.getCommentResponseDtoList();
-        for (CommentResponseDto commentResponseDto : commentResponseDtoList) {
+        for (CommentResponseDto commentResponseDto : this.getCommentResponseDtoList()) {
             if (postResponseDto.getPostId()==commentResponseDto.getPostId()){
                 postResponseDto.addCommentResponseDtoList(commentResponseDto);
             }
@@ -161,7 +158,7 @@ public class PostService {
         }
     }
 
-    // 전체 댓글 리스트
+    // 전체 댓글 ResponseDto List로 만들기
     private List<CommentResponseDto> getCommentResponseDtoList() {
         // Comment DB > entityList
         List<CommentEntity> commentEntityList = commentRepository.findAllByOrderByModifiedAtDesc();
