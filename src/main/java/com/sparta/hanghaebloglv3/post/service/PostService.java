@@ -73,23 +73,7 @@ public class PostService {
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         postEntities.forEach(postEntity -> postResponseDtoList.add(new PostResponseDto(postEntity)));
 
-        // Comment DB > entityList
-        List<CommentEntity> commentEntityList = commentRepository.findAllByOrderByModifiedAtDesc();
-
-        // entityList > List<CommentResponseDto>
-        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-        for (CommentEntity commentEntity : commentEntityList) {
-
-            CommentResponseDto commentResponseDto = CommentResponseDto.builder()
-                    .postId(commentEntity.getPostEntity().getPostId())
-                    .commentId(commentEntity.getCommentId())
-                    .content(commentEntity.getContent())
-                    .username(commentEntity.getUserEntity().getUsername())
-                    .createdAt(commentEntity.getCreatedAt())
-                    .modifiedAt(commentEntity.getModifiedAt())
-                    .build();
-            commentResponseDtoList.add(commentResponseDto);
-        }
+        List<CommentResponseDto> commentResponseDtoList = this.getCommentResponseDtoList();
 
         // postId로 각 게시글에 달린 댓글 찾아 postResponseDto에 add 해주기.
         for (PostResponseDto postResponseDto : postResponseDtoList) {
@@ -106,10 +90,28 @@ public class PostService {
      * Get post by id.
      */
     @Transactional(readOnly = true)
-    public PostResponseDto getPost(Long id) {
+    public PostResponseDto getPost(Long id, HttpServletRequest request) {
+        // 토큰 체크 추가
+        UserEntity userEntity = jwtUtil.checkToken(request);
+
+        if (userEntity == null) {
+            throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
+        }
+
+
         PostEntity postEntity = postRepository.findById(id)
                 .orElseThrow(() -> new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_POST, null));
-        return new PostResponseDto(postEntity);
+
+        PostResponseDto postResponseDto = new PostResponseDto(postEntity);
+
+        List<CommentResponseDto> commentResponseDtoList = this.getCommentResponseDtoList();
+        for (CommentResponseDto commentResponseDto : commentResponseDtoList) {
+            if (postResponseDto.getPostId()==commentResponseDto.getPostId()){
+                postResponseDto.addCommentResponseDtoList(commentResponseDto);
+            }
+        }
+
+        return postResponseDto;
     }
 
     /**
@@ -157,5 +159,27 @@ public class PostService {
         if (postEntity.getUserEntity().equals(userEntity)) {
             postRepository.delete(postEntity);
         }
+    }
+
+    // 전체 댓글 리스트
+    private List<CommentResponseDto> getCommentResponseDtoList() {
+        // Comment DB > entityList
+        List<CommentEntity> commentEntityList = commentRepository.findAllByOrderByModifiedAtDesc();
+
+        // entityList > List<CommentResponseDto>
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+        for (CommentEntity commentEntity : commentEntityList) {
+
+            CommentResponseDto commentResponseDto = CommentResponseDto.builder()
+                    .postId(commentEntity.getPostEntity().getPostId())
+                    .commentId(commentEntity.getCommentId())
+                    .content(commentEntity.getContent())
+                    .username(commentEntity.getUserEntity().getUsername())
+                    .createdAt(commentEntity.getCreatedAt())
+                    .modifiedAt(commentEntity.getModifiedAt())
+                    .build();
+            commentResponseDtoList.add(commentResponseDto);
+        }
+        return commentResponseDtoList;
     }
 }

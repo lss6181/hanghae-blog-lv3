@@ -40,8 +40,8 @@ public class PostController {
    * Get certain post.
    */
   @GetMapping("/api/post/{id}")
-  public PostResponseDto getPost(@PathVariable Long id) {
-    return postService.getPost(id);
+  public PostResponseDto getPost(@PathVariable Long id, HttpServletRequest request) {
+    return postService.getPost(id, request);
   }
 
   /**
