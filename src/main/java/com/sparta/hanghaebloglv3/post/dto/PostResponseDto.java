@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Getter
 public class PostResponseDto { // 게시물 CRUD 요청에 대한 응답으로 사용되는 DTO
-    private long contentId;
+    private long postId;
     private String title;
     private String contents;
     private String username;
@@ -27,7 +27,7 @@ public class PostResponseDto { // 게시물 CRUD 요청에 대한 응답으로 �
      */
     @Builder
     public PostResponseDto(PostEntity postEntity) {
-        this.contentId = postEntity.getPostId();
+        this.postId = postEntity.getPostId();
         this.title = postEntity.getTitle();
         this.contents = postEntity.getContent();
         this.username = postEntity.getUserEntity().getUsername();

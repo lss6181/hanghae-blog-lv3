@@ -32,8 +32,8 @@ public class PostController {
    * Get post list.
    */
   @GetMapping("/api/post")
-  public List<PostResponseDto> getPostList() {
-    return postService.getPostList();
+  public List<PostResponseDto> getPostList(HttpServletRequest request) {
+    return postService.getPostList(request);
   }
 
   /**

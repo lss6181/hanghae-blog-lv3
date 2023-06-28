@@ -56,26 +56,45 @@ public class PostService {
      * Get all post.
      */
     @Transactional(readOnly = true) // readOnly true인 경우, JPA 영속성 컨텍스트에 갱신되지 않기 때문에, 조회 시 false로 설정하는 것보다 더 빠르게 조회가 가능함.
-    public List<PostResponseDto> getPostList() {
+    public List<PostResponseDto> getPostList(HttpServletRequest request) {
+
+        // 토큰 체크 추가
+        UserEntity userEntity = jwtUtil.checkToken(request);
+
+        if (userEntity == null) {
+            throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
+        }
+
 
         // Post Db > entityList
         List<PostEntity> postEntities = postRepository.findAllByOrderByModifiedAtDesc();
+
         // entityList > List<PostResponseDto>
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         postEntities.forEach(postEntity -> postResponseDtoList.add(new PostResponseDto(postEntity)));
 
         // Comment DB > entityList
         List<CommentEntity> commentEntityList = commentRepository.findAllByOrderByModifiedAtDesc();
+
         // entityList > List<CommentResponseDto>
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         for (CommentEntity commentEntity : commentEntityList) {
-            commentResponseDtoList.add(new CommentResponseDto(commentEntity.getCommentId(), commentEntity.getPostEntity().getPostId(), commentEntity.getContent(), commentEntity.getUserEntity().getUsername(), commentEntity.getCreatedAt(), commentEntity.getModifiedAt()));
+
+            CommentResponseDto commentResponseDto = CommentResponseDto.builder()
+                    .postId(commentEntity.getPostEntity().getPostId())
+                    .commentId(commentEntity.getCommentId())
+                    .content(commentEntity.getContent())
+                    .username(commentEntity.getUserEntity().getUsername())
+                    .createdAt(commentEntity.getCreatedAt())
+                    .modifiedAt(commentEntity.getModifiedAt())
+                    .build();
+            commentResponseDtoList.add(commentResponseDto);
         }
 
         // postId로 각 게시글에 달린 댓글 찾아 postResponseDto에 add 해주기.
         for (PostResponseDto postResponseDto : postResponseDtoList) {
             for (CommentResponseDto commentResponseDto : commentResponseDtoList) {
-                if (postResponseDto.getContentId()==commentResponseDto.getPostId()){
+                if (postResponseDto.getPostId()==commentResponseDto.getPostId()){
                     postResponseDto.addCommentResponseDtoList(commentResponseDto);
                 }
             }
