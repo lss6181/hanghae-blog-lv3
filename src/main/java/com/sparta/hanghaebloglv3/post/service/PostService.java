@@ -4,6 +4,7 @@ import com.sparta.hanghaebloglv3.comment.dto.CommentResponseDto;
 import com.sparta.hanghaebloglv3.comment.entity.CommentEntity;
 import com.sparta.hanghaebloglv3.comment.repository.CommentRepository;
 import com.sparta.hanghaebloglv3.common.code.HanghaeBlogErrorCode;
+import com.sparta.hanghaebloglv3.common.dto.ApiResult;
 import com.sparta.hanghaebloglv3.common.exception.HanghaeBlogException;
 import com.sparta.hanghaebloglv3.common.jwt.JwtUtil;
 import com.sparta.hanghaebloglv3.post.dto.PostRequestDto;
@@ -13,6 +14,7 @@ import com.sparta.hanghaebloglv3.post.repository.PostRepository;
 import com.sparta.hanghaebloglv3.user.entity.UserEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -140,7 +142,7 @@ public class PostService {
      * Delete post.
      */
     @Transactional
-    public void deletePost(Long id, HttpServletRequest request) {
+    public ApiResult deletePost(Long id, HttpServletRequest request) {
 
         // 토큰 체크 추가
         UserEntity userEntity = jwtUtil.checkToken(request);
@@ -153,9 +155,12 @@ public class PostService {
                 () -> new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_POST, null)
         );
 
-        if (postEntity.getUserEntity().equals(userEntity)) {
-            postRepository.delete(postEntity);
+        if (!postEntity.getUserEntity().equals(userEntity)) {
+            throw new HanghaeBlogException(HanghaeBlogErrorCode.UNAUTHORIZED_USER, null);
         }
+        postRepository.delete(postEntity);
+
+        return new ApiResult("게시글 삭제 성공", HttpStatus.OK.value()); // 게시글 삭제 성공시 ApiResult Dto를 사용하여 성공메세지와 statusCode를 띄움
     }
 
     // 전체 댓글 ResponseDto List로 만들기

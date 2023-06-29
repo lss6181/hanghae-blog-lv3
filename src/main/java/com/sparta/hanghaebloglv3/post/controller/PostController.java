@@ -57,7 +57,6 @@ public class PostController {
    */
   @DeleteMapping("/api/post/{id}")
   public ApiResult deletePost(@PathVariable Long id, HttpServletRequest request) {
-    postService.deletePost(id, request);
-    return new ApiResult("게시글 삭제 성공", HttpStatus.OK.value()); // 게시글 삭제 성공시 ApiResult Dto를 사용하여 성공메세지와 statusCode를 띄움
+    return postService.deletePost(id, request);
   }
 }
