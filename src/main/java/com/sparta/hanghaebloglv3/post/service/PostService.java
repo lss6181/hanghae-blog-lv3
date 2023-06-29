@@ -68,14 +68,14 @@ public class PostService {
         }
 
 
-        // Post Db > entityList
+        // Post Db > List<PostEntity>
         List<PostEntity> postEntities = postRepository.findAllByOrderByModifiedAtDesc();
 
-        // entityList > List<PostResponseDto>
+        // List<PostEntity> > List<PostResponseDto>
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         postEntities.forEach(postEntity -> postResponseDtoList.add(new PostResponseDto(postEntity)));
 
-        // postId로 각 게시글에 달린 댓글 찾아 postResponseDto에 add 해주기.
+        // for문으로 게시글 하나 씩 돌 때 마다 댓글전체도 돌려 postId로 매칭시켜 postResponseDto에 댓글 add 해주기.
         for (PostResponseDto postResponseDto : postResponseDtoList) {
             for (CommentResponseDto commentResponseDto : this.getCommentResponseDtoList()) {
                 if (postResponseDto.getPostId()==commentResponseDto.getPostId()){
@@ -104,6 +104,7 @@ public class PostService {
 
         PostResponseDto postResponseDto = new PostResponseDto(postEntity);
 
+        // for문으로 전체댓글 돌려 선택된 게시글과 postId로 매칭시켜 해당 게시글의 댓글까지 보이게 하기
         for (CommentResponseDto commentResponseDto : this.getCommentResponseDtoList()) {
             if (postResponseDto.getPostId()==commentResponseDto.getPostId()){
                 postResponseDto.addCommentResponseDtoList(commentResponseDto);
@@ -121,7 +122,6 @@ public class PostService {
 
         // 토큰 체크 추가
         UserEntity userEntity = jwtUtil.checkToken(request);
-
         if (userEntity == null) {
             throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
         }
@@ -130,6 +130,7 @@ public class PostService {
                 () -> new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_POST, null)
         );
 
+        // 토큰 사용자정보와 수정할 게시글 작성자가 다를경우
         if (!postEntity.getUserEntity().equals(userEntity)) {
             throw new HanghaeBlogException(HanghaeBlogErrorCode.UNAUTHORIZED_USER, null);
         }
@@ -146,7 +147,6 @@ public class PostService {
 
         // 토큰 체크 추가
         UserEntity userEntity = jwtUtil.checkToken(request);
-
         if (userEntity == null) {
             throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
         }
@@ -155,6 +155,7 @@ public class PostService {
                 () -> new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_POST, null)
         );
 
+        // 토큰 사용자정보와 삭제할 게시글 작성자가 다를경우
         if (!postEntity.getUserEntity().equals(userEntity)) {
             throw new HanghaeBlogException(HanghaeBlogErrorCode.UNAUTHORIZED_USER, null);
         }
