@@ -21,6 +21,7 @@ public class PostResponseDto { // 게시물 CRUD 요청에 대한 응답으로 �
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<CommentResponseDto> commentList = new ArrayList<>();
+    private int heartCount;
 
     /**
      * initializer using Builder.
@@ -33,6 +34,7 @@ public class PostResponseDto { // 게시물 CRUD 요청에 대한 응답으로 �
         this.username = postEntity.getUserEntity().getUsername();
         this.createdAt = postEntity.getCreatedAt();
         this.modifiedAt = postEntity.getModifiedAt();
+        this.heartCount = postEntity.getHeartFeedList().size();
     }
 
     public void addCommentResponseDtoList(CommentResponseDto responseDto) {

@@ -2,6 +2,7 @@ package com.sparta.hanghaebloglv3.post.entity;
 
 import com.sparta.hanghaebloglv3.comment.entity.CommentEntity;
 import com.sparta.hanghaebloglv3.common.entity.Timestamped;
+import com.sparta.hanghaebloglv3.heart.heartFeed.entity.HeartFeed;
 import com.sparta.hanghaebloglv3.post.dto.PostRequestDto;
 import com.sparta.hanghaebloglv3.user.entity.UserEntity;
 import jakarta.persistence.*;
@@ -43,6 +44,9 @@ public class PostEntity extends Timestamped {
 
 	@OneToMany(mappedBy = "postEntity", cascade = CascadeType.PERSIST, orphanRemoval = true)
 	private List<CommentEntity> commentEntityList = new ArrayList<>();
+
+	@OneToMany(mappedBy = "postEntity", cascade = CascadeType.PERSIST, orphanRemoval = true)
+	private List<HeartFeed> heartFeedList = new ArrayList<>();
 
 	/**
 	 * Initializer using Builder.

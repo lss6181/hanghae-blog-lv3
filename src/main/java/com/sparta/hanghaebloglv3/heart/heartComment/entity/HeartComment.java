@@ -1,7 +1,6 @@
-package com.sparta.hanghaebloglv3.heart.entity;
+package com.sparta.hanghaebloglv3.heart.heartComment.entity;
 
 import com.sparta.hanghaebloglv3.comment.entity.CommentEntity;
-import com.sparta.hanghaebloglv3.post.entity.PostEntity;
 import com.sparta.hanghaebloglv3.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,7 +8,7 @@ import lombok.Getter;
 @Entity
 @Getter
 @Table(name = "tb_heartComment")
-public class heartComment {
+public class HeartComment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "heartComment_id")

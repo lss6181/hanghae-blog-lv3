@@ -4,6 +4,7 @@ import com.sparta.hanghaebloglv3.comment.dto.CommentResponseDto;
 import com.sparta.hanghaebloglv3.comment.entity.CommentEntity;
 import com.sparta.hanghaebloglv3.comment.repository.CommentRepository;
 import com.sparta.hanghaebloglv3.common.code.HanghaeBlogErrorCode;
+import com.sparta.hanghaebloglv3.common.constant.ProjConst;
 import com.sparta.hanghaebloglv3.common.dto.ApiResult;
 import com.sparta.hanghaebloglv3.common.exception.HanghaeBlogException;
 import com.sparta.hanghaebloglv3.common.jwt.JwtUtil;
@@ -130,12 +131,15 @@ public class PostService {
                 () -> new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_POST, null)
         );
 
-        // 토큰 사용자정보와 수정할 게시글 작성자가 다를경우
-        if (!postEntity.getUserEntity().equals(userEntity)) {
+        /*
+         * 수정하려고 하는 댓글의 작성자가 본인인지, 관리자 계정으로 수정하려고 하는지 확인.
+         */
+        if (this.checkValidUser(userEntity, postEntity)) {
             throw new HanghaeBlogException(HanghaeBlogErrorCode.UNAUTHORIZED_USER, null);
         }
 
         postEntity.update(requestDto);
+
         return new PostResponseDto(postEntity);
     }
 
@@ -155,10 +159,13 @@ public class PostService {
                 () -> new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_POST, null)
         );
 
-        // 토큰 사용자정보와 삭제할 게시글 작성자가 다를경우
-        if (!postEntity.getUserEntity().equals(userEntity)) {
+        /*
+         * 수정하려고 하는 댓글의 작성자가 본인인지, 관리자 계정으로 수정하려고 하는지 확인.
+         */
+        if (this.checkValidUser(userEntity, postEntity)) {
             throw new HanghaeBlogException(HanghaeBlogErrorCode.UNAUTHORIZED_USER, null);
         }
+
         postRepository.delete(postEntity);
 
         return new ApiResult("게시글 삭제 성공", HttpStatus.OK.value()); // 게시글 삭제 성공시 ApiResult Dto를 사용하여 성공메세지와 statusCode를 띄움
@@ -184,5 +191,14 @@ public class PostService {
             commentResponseDtoList.add(commentResponseDto);
         }
         return commentResponseDtoList;
+    }
+
+    /**
+     * Check valid user.
+     */
+    private boolean checkValidUser(UserEntity userEntity, PostEntity postEntity) {
+        boolean result = !(userEntity.getId().equals(postEntity.getUserEntity().getId()))
+                && !(userEntity.getRole().equals(ProjConst.ADMIN_ROLE));  // 작성자와 로그인사용자가 같지 않으면서 관리자계정도 아닌것이 true.
+        return result;
     }
 }

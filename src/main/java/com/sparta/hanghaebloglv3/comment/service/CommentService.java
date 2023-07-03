@@ -171,7 +171,7 @@ public class CommentService {
      * Check valid user.
      */
     private boolean checkValidUser(UserEntity userEntity, CommentEntity commentEntity) {
-        boolean result = !(userEntity.getUsername().equals(commentEntity.getUserEntity().getUsername()))
+        boolean result = !(userEntity.getId().equals(commentEntity.getUserEntity().getId()))
                 && !(userEntity.getRole().equals(ProjConst.ADMIN_ROLE));  // 작성자와 로그인사용자가 같지 않으면서 관리자계정도 아닌것이 true.
         return result;
     }

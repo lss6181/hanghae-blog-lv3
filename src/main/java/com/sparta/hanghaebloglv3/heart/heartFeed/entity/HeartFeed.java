@@ -1,4 +1,4 @@
-package com.sparta.hanghaebloglv3.heart.entity;
+package com.sparta.hanghaebloglv3.heart.heartFeed.entity;
 
 import com.sparta.hanghaebloglv3.post.entity.PostEntity;
 import com.sparta.hanghaebloglv3.user.entity.UserEntity;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "tb_heartFeed")
-public class heartFeed {
+public class HeartFeed {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "heartFeed_id")
@@ -21,8 +21,12 @@ public class heartFeed {
 	PostEntity postEntity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "username", referencedColumnName = "username")
+	@JoinColumn(name = "login_id", referencedColumnName = "login_id")
 	UserEntity userEntity;
 
+	public HeartFeed(PostEntity postEntity, UserEntity userEntity) {
+		this.postEntity = postEntity;
+		this.userEntity = userEntity;
+	}
 
 }

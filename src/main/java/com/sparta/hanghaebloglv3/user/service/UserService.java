@@ -39,7 +39,7 @@ public class UserService {
     // 회원 중복 확인
     Optional<UserEntity> found = userRepository.findById(id); // findByUsername메서드 -> findById로 변경
     if (found.isPresent()) {
-      throw new HanghaeBlogException(HanghaeBlogErrorCode.IN_USED_USERNAME, null);
+      throw new HanghaeBlogException(HanghaeBlogErrorCode.IN_USED_ID, null);
     }
 
     UserEntity userEntity = new UserEntity(id, username, password, role); // id 추가
