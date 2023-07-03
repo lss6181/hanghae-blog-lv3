@@ -69,7 +69,7 @@ public class HeartFeedService {
 			throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
 		}
 
-		// 좋아요 entity find
+		// HeartFeed entity find
 		HeartFeed heartFeed = heartFeedRepository.findById(heartFeedId).orElseThrow(
 				() -> new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_HEART, null)
 		);
