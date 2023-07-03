@@ -130,7 +130,7 @@ public class JwtUtil {
 			}
 
 			// 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-			userEntity = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+			userEntity = userRepository.findById(claims.getSubject()).orElseThrow(
 					() -> new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null)
 			);
 		}

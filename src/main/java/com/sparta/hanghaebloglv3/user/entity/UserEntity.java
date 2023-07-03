@@ -1,5 +1,6 @@
 package com.sparta.hanghaebloglv3.user.entity;
 
+import com.sparta.hanghaebloglv3.user.dto.ProfileRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -17,11 +18,17 @@ import lombok.NoArgsConstructor;
 public class UserEntity {
 
   @Id
+  @Column(name = "login_id", nullable = false, unique = true)
+  private String id;
+
   @Column(name = "username")
   private String username;
 
   @Column(name = "password", nullable = false)
   private String password;
+
+  @Column
+  private String introduction;
 
   @Column(name = "role", nullable = false)
   private String role;
@@ -29,10 +36,16 @@ public class UserEntity {
   /**
    * Initializer.
    */
-  public UserEntity(String username, String password, String role) {
+  public UserEntity(String id, String username, String password, String role) {
+    this.id = id;
     this.username = username;
     this.password = password;
     this.role = role;
   }
-}
 
+  public void update(ProfileRequestDto requestDto) {
+    this.username = requestDto.getUsername();
+    this.password = requestDto.getPassword();
+    this.introduction = requestDto.getIntroduction();
+  }
+}
