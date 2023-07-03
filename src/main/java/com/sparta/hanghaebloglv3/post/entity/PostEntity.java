@@ -36,7 +36,7 @@ public class PostEntity extends Timestamped {
 	@ManyToOne(fetch = FetchType.LAZY)
 	// FetchType.LAZY는 연관 관계로 걸린 엔티티가 참조 되어야 하는 시점에 읽는 방법.
 	// JPA N + 1 Problem을 방지하기 위한 가장 기초적인 옵션 값.
-	@JoinColumn(name = "username", referencedColumnName = "username")
+	@JoinColumn(name = "login_id", referencedColumnName = "login_id")
 	// 외래 키를 매핑할 때 사용하는 어노테이션, name = "매핑할 외래 키 컬럼명, referencedColumnName = 대상 테이블의 컬럼명
 	// 해당 어노테이션을 생략해도 연관 관계가 걸려 있을 경우, 자동으로 외래 키를 탐색함.
 	private UserEntity userEntity;
