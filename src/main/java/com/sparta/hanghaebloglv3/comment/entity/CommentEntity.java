@@ -25,6 +25,6 @@ public class CommentEntity extends Timestamped {
   private PostEntity postEntity;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "username", referencedColumnName = "username")
+  @JoinColumn(name = "login_id", referencedColumnName = "login_id")
   private UserEntity userEntity;
 }
