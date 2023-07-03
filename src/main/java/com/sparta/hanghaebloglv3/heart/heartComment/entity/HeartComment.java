@@ -4,9 +4,11 @@ import com.sparta.hanghaebloglv3.comment.entity.CommentEntity;
 import com.sparta.hanghaebloglv3.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "tb_heartComment")
 public class HeartComment {
 	@Id
@@ -15,10 +17,15 @@ public class HeartComment {
 	private Long heartCommentId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "commentId", referencedColumnName = "commentId")
+	@JoinColumn(name = "comment_Id", referencedColumnName = "comment_Id")
 	CommentEntity commentEntity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "username", referencedColumnName = "username")
+	@JoinColumn(name = "login_id", referencedColumnName = "login_id")
 	UserEntity userEntity;
+
+	public HeartComment(CommentEntity commentEntity, UserEntity userEntity) {
+		this.commentEntity = commentEntity;
+		this.userEntity = userEntity;
+	}
 }

@@ -184,9 +184,10 @@ public class PostService {
                     .postId(commentEntity.getPostEntity().getPostId())
                     .commentId(commentEntity.getCommentId())
                     .content(commentEntity.getContent())
-                    .username(commentEntity.getUserEntity().getUsername())
+                    .loginId(commentEntity.getUserEntity().getId())
                     .createdAt(commentEntity.getCreatedAt())
                     .modifiedAt(commentEntity.getModifiedAt())
+                    .heartCount(commentEntity.getHeartCommentList().size())
                     .build();
             commentResponseDtoList.add(commentResponseDto);
         }

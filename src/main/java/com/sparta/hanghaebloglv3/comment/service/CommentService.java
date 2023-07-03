@@ -65,9 +65,10 @@ public class CommentService {
                 .postId(postEntity.getPostId())
                 .commentId(entity.getCommentId())
                 .content(entity.getContent())
-                .username(userEntity.getUsername())
+                .loginId(userEntity.getId())
                 .createdAt(entity.getCreatedAt())
                 .modifiedAt(entity.getModifiedAt())
+                .heartCount(entity.getHeartCommentList().size())
                 .build();
     }
 
@@ -108,7 +109,7 @@ public class CommentService {
         return CommentResponseDto.builder()
                 .postId(commentEntity.getPostEntity().getPostId())
                 .commentId(commentEntity.getCommentId())
-                .username(commentEntity.getUserEntity().getUsername())
+                .loginId(commentEntity.getUserEntity().getId())
                 .content(commentEntity.getContent())
                 .modifiedAt(commentEntity.getModifiedAt())
                 .build();
