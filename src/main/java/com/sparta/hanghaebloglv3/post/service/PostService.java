@@ -13,6 +13,7 @@ import com.sparta.hanghaebloglv3.post.dto.PostResponseDto;
 import com.sparta.hanghaebloglv3.post.entity.PostEntity;
 import com.sparta.hanghaebloglv3.post.repository.PostRepository;
 import com.sparta.hanghaebloglv3.user.entity.UserEntity;
+import com.sparta.hanghaebloglv3.user.entity.UserRoleEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,18 +38,11 @@ public class PostService {
      * Create Post.
      */
     @Transactional
-    public PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest request) {
-
-        // 토큰 체크 추가
-        UserEntity userEntity = jwtUtil.checkToken(request);
-
-        if (userEntity == null) {
-            throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
-        }
+    public PostResponseDto createPost(PostRequestDto requestDto, UserEntity user) {
 
         PostEntity postEntity = PostEntity.builder()
                 .requestDto(requestDto)
-                .userEntity(userEntity)
+                .userEntity(user)
                 .build();
 
         postRepository.save(postEntity);
@@ -59,15 +53,7 @@ public class PostService {
      * Get all post.
      */
     @Transactional(readOnly = true) // readOnly true인 경우, JPA 영속성 컨텍스트에 갱신되지 않기 때문에, 조회 시 false로 설정하는 것보다 더 빠르게 조회가 가능함.
-    public List<PostResponseDto> getPostList(HttpServletRequest request) {
-
-        // 토큰 체크 추가
-        UserEntity userEntity = jwtUtil.checkToken(request);
-
-        if (userEntity == null) {
-            throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
-        }
-
+    public List<PostResponseDto> getPostList(UserEntity user) {
 
         // Post Db > List<PostEntity>
         List<PostEntity> postEntities = postRepository.findAllByOrderByModifiedAtDesc();
@@ -91,14 +77,7 @@ public class PostService {
      * Get post by id.
      */
     @Transactional(readOnly = true)
-    public PostResponseDto getPost(Long id, HttpServletRequest request) {
-        // 토큰 체크 추가
-        UserEntity userEntity = jwtUtil.checkToken(request);
-
-        if (userEntity == null) {
-            throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
-        }
-
+    public PostResponseDto getPost(Long id, UserEntity user) {
 
         PostEntity postEntity = postRepository.findById(id)
                 .orElseThrow(() -> new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_POST, null));
@@ -119,13 +98,7 @@ public class PostService {
      * Update post by id.
      */
     @Transactional
-    public PostResponseDto updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request) {
-
-        // 토큰 체크 추가
-        UserEntity userEntity = jwtUtil.checkToken(request);
-        if (userEntity == null) {
-            throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
-        }
+    public PostResponseDto updatePost(Long id, PostRequestDto requestDto, UserEntity user) {
 
         PostEntity postEntity = postRepository.findById(id).orElseThrow(
                 () -> new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_POST, null)
@@ -134,7 +107,7 @@ public class PostService {
         /*
          * 수정하려고 하는 댓글의 작성자가 본인인지, 관리자 계정으로 수정하려고 하는지 확인.
          */
-        if (this.checkValidUser(userEntity, postEntity)) {
+        if (this.checkValidUser(user, postEntity)) {
             throw new HanghaeBlogException(HanghaeBlogErrorCode.UNAUTHORIZED_USER, null);
         }
 
@@ -147,13 +120,7 @@ public class PostService {
      * Delete post.
      */
     @Transactional
-    public ApiResult deletePost(Long id, HttpServletRequest request) {
-
-        // 토큰 체크 추가
-        UserEntity userEntity = jwtUtil.checkToken(request);
-        if (userEntity == null) {
-            throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
-        }
+    public ApiResult deletePost(Long id, UserEntity user) {
 
         PostEntity postEntity = postRepository.findById(id).orElseThrow(
                 () -> new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_POST, null)
@@ -162,7 +129,7 @@ public class PostService {
         /*
          * 수정하려고 하는 댓글의 작성자가 본인인지, 관리자 계정으로 수정하려고 하는지 확인.
          */
-        if (this.checkValidUser(userEntity, postEntity)) {
+        if (this.checkValidUser(user, postEntity)) {
             throw new HanghaeBlogException(HanghaeBlogErrorCode.UNAUTHORIZED_USER, null);
         }
 
@@ -184,7 +151,7 @@ public class PostService {
                     .postId(commentEntity.getPostEntity().getPostId())
                     .commentId(commentEntity.getCommentId())
                     .content(commentEntity.getContent())
-                    .loginId(commentEntity.getUserEntity().getId())
+                    .userName(commentEntity.getUserEntity().getUsername())
                     .createdAt(commentEntity.getCreatedAt())
                     .modifiedAt(commentEntity.getModifiedAt())
                     .heartCount(commentEntity.getHeartCommentList().size())
@@ -198,8 +165,8 @@ public class PostService {
      * Check valid user.
      */
     private boolean checkValidUser(UserEntity userEntity, PostEntity postEntity) {
-        boolean result = !(userEntity.getId().equals(postEntity.getUserEntity().getId()))
-                && !(userEntity.getRole().equals(ProjConst.ADMIN_ROLE));  // 작성자와 로그인사용자가 같지 않으면서 관리자계정도 아닌것이 true.
+        boolean result = !(userEntity.getUserId().equals(postEntity.getUserEntity().getUserId()))
+                && !(userEntity.getRole().equals(UserRoleEnum.Authority.ADMIN));  // 작성자와 로그인사용자가 같지 않으면서 관리자계정도 아닌것이 true.
         return result;
     }
 }

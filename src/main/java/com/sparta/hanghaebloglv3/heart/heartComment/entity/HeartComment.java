@@ -21,7 +21,7 @@ public class HeartComment {
 	CommentEntity commentEntity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "login_id", referencedColumnName = "login_id")
+	@JoinColumn(name = "user_id")
 	UserEntity userEntity;
 
 	public HeartComment(CommentEntity commentEntity, UserEntity userEntity) {

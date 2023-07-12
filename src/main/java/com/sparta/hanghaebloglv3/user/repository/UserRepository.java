@@ -10,6 +10,6 @@ import java.util.Optional;
  * UserRepository.
  */
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, String> { // id 타입 String으로 변경
-    //  Optional<UserEntity> findByUsername(String username); // findById 사용
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
+	Optional<UserEntity> findByUsername(String username);
 }

@@ -11,6 +11,7 @@ import com.sparta.hanghaebloglv3.common.jwt.JwtUtil;
 import com.sparta.hanghaebloglv3.heart.heartComment.entity.HeartComment;
 import com.sparta.hanghaebloglv3.heart.heartComment.repository.HeartCommentRepository;
 import com.sparta.hanghaebloglv3.user.entity.UserEntity;
+import com.sparta.hanghaebloglv3.user.entity.UserRoleEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,13 +29,7 @@ public class HeartCommentService {
 	private final JwtUtil jwtUtil;
 
 	@Transactional
-	public CommentResponseDto onClickCommentHeart(Long commentId, HttpServletRequest request) {
-		// 토큰 체크
-		UserEntity userEntity = jwtUtil.checkToken(request);
-
-		if (userEntity == null) {
-			throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
-		}
+	public CommentResponseDto onClickCommentHeart(Long commentId, UserEntity user) {
 
 		// 좋아요 누른 댓글 find
 		CommentEntity commentEntity = commentRepository.findById(commentId).orElseThrow(
@@ -42,7 +37,7 @@ public class HeartCommentService {
 		);
 
 		// 좋아요 누른 댓글이 본인 댓글이면 좋아요 불가능
-		if (userEntity.getId().equals(commentEntity.getUserEntity().getId())) {
+		if (user.getUserId().equals(commentEntity.getUserEntity().getUserId())) {
 			throw new HanghaeBlogException(HanghaeBlogErrorCode.CAN_NOT_MINE, null);
 		}
 
@@ -50,33 +45,27 @@ public class HeartCommentService {
 		List<CommentEntity> commentEntityList = commentRepository.findAll();
 		for (CommentEntity commentEntitys : commentEntityList) {
 			if (commentEntitys.getCommentId().equals(commentEntity.getCommentId())
-					&& commentEntitys.getUserEntity().getId().equals(userEntity.getId())) {
+					&& commentEntitys.getUserEntity().getUserId().equals(user.getUserId())) {
 				throw new HanghaeBlogException(HanghaeBlogErrorCode.OVERLAP_HEART, null);
 			}
 		}
 
 		// HeartCommentRepository DB저장
-		heartCommentRepository.save(new HeartComment(commentEntity, userEntity));
+		heartCommentRepository.save(new HeartComment(commentEntity, user));
 
 
 		return CommentResponseDto.builder()
 				.postId(commentEntity.getPostEntity().getPostId())
 				.commentId(commentEntity.getCommentId())
 				.content(commentEntity.getContent())
-				.loginId(commentEntity.getUserEntity().getId())
+				.userName(commentEntity.getUserEntity().getUsername())
 				.createdAt(commentEntity.getCreatedAt())
 				.modifiedAt(commentEntity.getModifiedAt())
 				.heartCount(commentEntity.getHeartCommentList().size())
 				.build();
 	}
 
-	public ApiResult deleteCommentHeart(Long heartCommentId, HttpServletRequest request) {
-		// 토큰 체크
-		UserEntity userEntity = jwtUtil.checkToken(request);
-
-		if (userEntity == null) {
-			throw new HanghaeBlogException(HanghaeBlogErrorCode.NOT_FOUND_USER, null);
-		}
+	public ApiResult deleteCommentHeart(Long heartCommentId, UserEntity user) {
 
 		// HeartComment entity find
 		HeartComment heartComment = heartCommentRepository.findById(heartCommentId).orElseThrow(
@@ -84,20 +73,20 @@ public class HeartCommentService {
 		);
 
 		// 좋아요 누른 본인이거나 admin일경우만 삭제가능하도록 체크
-		if (this.checkValidUser(userEntity, heartComment)) {
+		if (this.checkValidUser(user, heartComment)) {
 			throw new HanghaeBlogException(HanghaeBlogErrorCode.UNAUTHORIZED_USER, null);
 		}
 
 		heartCommentRepository.delete(heartComment);
-		return new ApiResult("좋아요 취소 성공", HttpStatus.OK.value());
+		return new ApiResult(ProjConst.API_CALL_SUCCESS, HttpStatus.OK.value());
 	}
 
 	/**
 	 * Check valid user.
 	 */
 	private boolean checkValidUser(UserEntity userEntity, HeartComment heartComment) {
-		boolean result = !(userEntity.getId().equals(heartComment.getUserEntity().getId()))
-				&& !(userEntity.getRole().equals(ProjConst.ADMIN_ROLE));  // 작성자와 로그인사용자가 같지 않으면서 관리자계정도 아닌것이 true.
+		boolean result = !(userEntity.getUserId().equals(heartComment.getUserEntity().getUserId()))
+				&& !(userEntity.getRole().equals(UserRoleEnum.Authority.ADMIN));  // 작성자와 로그인사용자가 같지 않으면서 관리자계정도 아닌것이 true.
 		return result;
 	}
 }

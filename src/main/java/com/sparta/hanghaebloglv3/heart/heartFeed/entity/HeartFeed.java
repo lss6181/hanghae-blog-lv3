@@ -21,7 +21,7 @@ public class HeartFeed {
 	PostEntity postEntity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "login_id", referencedColumnName = "login_id")
+	@JoinColumn(name = "user_id")
 	UserEntity userEntity;
 
 	public HeartFeed(PostEntity postEntity, UserEntity userEntity) {

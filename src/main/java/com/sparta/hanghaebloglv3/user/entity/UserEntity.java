@@ -1,10 +1,7 @@
 package com.sparta.hanghaebloglv3.user.entity;
 
 import com.sparta.hanghaebloglv3.user.dto.ProfileRequestDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,8 +15,8 @@ import lombok.NoArgsConstructor;
 public class UserEntity {
 
   @Id
-  @Column(name = "login_id", nullable = false, unique = true)
-  private String id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long userId;
 
   @Column(name = "username")
   private String username;
@@ -31,13 +28,13 @@ public class UserEntity {
   private String introduction;
 
   @Column(name = "role", nullable = false)
-  private String role;
+  @Enumerated(value = EnumType.STRING)
+  private UserRoleEnum role;
 
   /**
    * Initializer.
    */
-  public UserEntity(String id, String username, String password, String role) {
-    this.id = id;
+  public UserEntity(String username, String password, UserRoleEnum role) {
     this.username = username;
     this.password = password;
     this.role = role;

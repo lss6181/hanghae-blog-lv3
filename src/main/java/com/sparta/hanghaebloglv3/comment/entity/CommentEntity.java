@@ -30,7 +30,7 @@ public class CommentEntity extends Timestamped {
 	private PostEntity postEntity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "login_id", referencedColumnName = "login_id")
+	@JoinColumn(name = "user_id")
 	private UserEntity userEntity;
 
 	@OneToMany(mappedBy = "commentEntity", cascade = CascadeType.PERSIST, orphanRemoval = true)

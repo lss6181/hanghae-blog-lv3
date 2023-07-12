@@ -14,7 +14,7 @@ public class CommentResponseDto {
 	private long commentId;
 	private long postId;
 	private String content;
-	private String loginId;
+	private String userName;
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
 	private int heartCount;
@@ -23,11 +23,11 @@ public class CommentResponseDto {
 	 * Initializer using Builder.
 	 */
 	@Builder
-	public CommentResponseDto(long commentId, long postId, String content, String loginId, LocalDateTime createdAt, LocalDateTime modifiedAt, int heartCount) {
+	public CommentResponseDto(long commentId, long postId, String content, String userName, LocalDateTime createdAt, LocalDateTime modifiedAt, int heartCount) {
 		this.commentId = commentId;
 		this.postId = postId;
 		this.content = content;
-		this.loginId = loginId;
+		this.userName = userName;
 		this.createdAt = createdAt;
 		this.modifiedAt = modifiedAt;
 		this.heartCount = heartCount;
