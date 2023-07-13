@@ -151,7 +151,7 @@ public class CommentService {
 		commentRepository.delete(commentEntity);
 
 		return ApiResult.builder()
-				.msg(ProjConst.API_CALL_SUCCESS)
+				.msg(ProjConst.DELETE_SUCCESS)
 				.statusCode(HttpStatus.OK.value())
 				.build();
 	}

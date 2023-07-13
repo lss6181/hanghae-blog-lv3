@@ -1,5 +1,6 @@
 package com.sparta.hanghaebloglv3.user.service;
 
+import com.sparta.hanghaebloglv3.common.constant.ProjConst;
 import com.sparta.hanghaebloglv3.common.dto.ApiResult;
 import com.sparta.hanghaebloglv3.user.dto.PasswordRequestDto;
 import com.sparta.hanghaebloglv3.user.dto.ProfileRequestDto;
@@ -73,7 +74,7 @@ public class UserService {
 		UserEntity userEntity = new UserEntity(username, password, role);
 		userRepository.save(userEntity);
 
-		return new ApiResult("회원가입 성공", HttpStatus.OK.value());
+		return new ApiResult(ProjConst.SIGN_UP_SUCCESS, HttpStatus.OK.value());
 	}
 
 	// 프로필 조회
@@ -99,7 +100,7 @@ public class UserService {
 			);
 		}
 
-		return new ApiResult("프로필 수정으로 넘어가기", HttpStatus.OK.value()); // 수정 페이지로 넘어가기 전 비밀번호 확인
+		return new ApiResult(ProjConst.PASSWORD_CHECK_OK, HttpStatus.OK.value()); // 수정 페이지로 넘어가기 전 비밀번호 확인
 	}
 
 	// 프로필 수정
@@ -108,6 +109,6 @@ public class UserService {
 
 		user.update(requestDto); // 유저 정보 수정
 
-		return new ApiResult("정보 수정 완료", HttpStatus.OK.value());
+		return new ApiResult(ProjConst.UPDATE_PROFILE_SUCCESS, HttpStatus.OK.value());
 	}
 }

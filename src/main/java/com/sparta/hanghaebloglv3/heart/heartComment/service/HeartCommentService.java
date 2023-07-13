@@ -113,7 +113,7 @@ public class HeartCommentService {
 		}
 
 		heartCommentRepository.delete(heartComment);
-		return new ApiResult(ProjConst.API_CALL_SUCCESS, HttpStatus.OK.value());
+		return new ApiResult(ProjConst.DELETE_SUCCESS, HttpStatus.OK.value());
 	}
 
 	/**

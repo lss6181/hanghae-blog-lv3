@@ -3,6 +3,7 @@ package com.sparta.hanghaebloglv3.post.service;
 import com.sparta.hanghaebloglv3.comment.dto.CommentResponseDto;
 import com.sparta.hanghaebloglv3.comment.entity.CommentEntity;
 import com.sparta.hanghaebloglv3.comment.repository.CommentRepository;
+import com.sparta.hanghaebloglv3.common.constant.ProjConst;
 import com.sparta.hanghaebloglv3.common.dto.ApiResult;
 import com.sparta.hanghaebloglv3.common.exception.IdNotFoundException;
 import com.sparta.hanghaebloglv3.common.jwt.JwtUtil;
@@ -171,7 +172,7 @@ public class PostService {
 
 		postRepository.delete(postEntity);
 
-		return new ApiResult("게시글 삭제 성공", HttpStatus.OK.value()); // 게시글 삭제 성공시 ApiResult Dto를 사용하여 성공메세지와 statusCode를 띄움
+		return new ApiResult(ProjConst.DELETE_SUCCESS, HttpStatus.OK.value());
 	}
 
 	// 전체 댓글 ResponseDto List로 만들기

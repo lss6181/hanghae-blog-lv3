@@ -12,4 +12,9 @@ public final class ProjConst { // class를 final로 선언하면, 오버라이�
   public static final String ADMIN_ROLE = "ADMIN";
 
   public static final String API_CALL_SUCCESS = "SUCCESS";
+  public static final String SIGN_UP_SUCCESS = "회원가입 성공";
+  public static final String PASSWORD_CHECK_OK = "비밀번호 확인 성공";
+  public static final String UPDATE_PROFILE_SUCCESS = "프로필 수정 성공";
+  public static final String DELETE_SUCCESS = "삭제 성공";
+
 }
