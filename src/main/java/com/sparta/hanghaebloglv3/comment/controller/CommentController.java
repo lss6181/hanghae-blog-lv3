@@ -5,8 +5,6 @@ import com.sparta.hanghaebloglv3.comment.dto.CommentResponseDto;
 import com.sparta.hanghaebloglv3.comment.service.CommentService;
 import com.sparta.hanghaebloglv3.common.dto.ApiResult;
 import com.sparta.hanghaebloglv3.common.security.UserDetailsImpl;
-import com.sparta.hanghaebloglv3.user.entity.UserEntity;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

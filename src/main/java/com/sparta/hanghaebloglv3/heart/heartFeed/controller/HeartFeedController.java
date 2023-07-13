@@ -4,7 +4,6 @@ import com.sparta.hanghaebloglv3.common.dto.ApiResult;
 import com.sparta.hanghaebloglv3.common.security.UserDetailsImpl;
 import com.sparta.hanghaebloglv3.heart.heartFeed.service.HeartFeedService;
 import com.sparta.hanghaebloglv3.post.dto.PostResponseDto;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
