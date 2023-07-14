@@ -14,5 +14,6 @@ public final class ProjConst { // class를 final로 선언하면, 오버라이�
   public static final String UPDATE_PROFILE_SUCCESS = "프로필 수정 성공";
   public static final String DELETE_SUCCESS = "삭제 성공";
   public static final String INVALID_TOKEN = "토큰이 유효하지 않습니다.";
+  public static final String NOT_FOUND_TOKEN = "토큰을 찾을 수 없습니다.";
 
 }

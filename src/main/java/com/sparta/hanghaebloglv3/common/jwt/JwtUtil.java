@@ -1,8 +1,5 @@
 package com.sparta.hanghaebloglv3.common.jwt;
 
-import com.sparta.hanghaebloglv3.common.constant.ProjConst;
-import com.sparta.hanghaebloglv3.common.dto.ApiResult;
-import com.sparta.hanghaebloglv3.common.exception.RestApiException;
 import com.sparta.hanghaebloglv3.user.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -12,16 +9,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Locale;
 
 @Slf4j(topic = "JwtUtil")
 @Component
@@ -36,7 +29,7 @@ public class JwtUtil {
 	// Token 식별자
 	public static final String BEARER_PREFIX = "Bearer ";
 	// 토큰 만료시간
-	private final long TOKEN_TIME = 60 * 60 * 1000L * 24; // 60분 x 24
+	private final long TOKEN_TIME = 60 * 60 * 1000L * 24 * 3; // 60분 x 24 x 3
 
 	@Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
 	private String secretKey;
@@ -69,7 +62,7 @@ public class JwtUtil {
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
 			return bearerToken.substring(7);
 		}
-		return new ApiResult(ProjConst.INVALID_TOKEN, HttpStatus.BAD_REQUEST.value()).toString();
+		return null;
 	}
 
 	// 토큰 검증
