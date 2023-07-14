@@ -1,5 +1,8 @@
 package com.sparta.hanghaebloglv3.common.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.hanghaebloglv3.common.constant.ProjConst;
+import com.sparta.hanghaebloglv3.common.dto.ApiResult;
 import com.sparta.hanghaebloglv3.common.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -7,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -37,6 +41,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 			if (!jwtUtil.validateToken(tokenValue)) {
 				log.error("Token Error");
+				ObjectMapper objectMapper = new ObjectMapper();
+				res.setContentType("application/json; charset=UTF-8");
+				res.getWriter().print(objectMapper.writeValueAsString(new ApiResult(ProjConst.INVALID_TOKEN, HttpStatus.BAD_REQUEST.value())));
 				return;
 			}
 

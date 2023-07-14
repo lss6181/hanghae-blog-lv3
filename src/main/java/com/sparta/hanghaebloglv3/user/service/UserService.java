@@ -12,6 +12,7 @@ import com.sparta.hanghaebloglv3.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ public class UserService {
 	 * Signup.
 	 */
 	@Transactional
-	public ApiResult signup(SignupRequestDto signupRequestDto) {
+	public ResponseEntity<ApiResult> signup(SignupRequestDto signupRequestDto) {
 		String username = signupRequestDto.getUsername();
 		String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
@@ -74,7 +75,7 @@ public class UserService {
 		UserEntity userEntity = new UserEntity(username, password, role);
 		userRepository.save(userEntity);
 
-		return new ApiResult(ProjConst.SIGN_UP_SUCCESS, HttpStatus.OK.value());
+		return ResponseEntity.ok().body(new ApiResult(ProjConst.SIGN_UP_SUCCESS,HttpStatus.OK.value()));
 	}
 
 	// 프로필 조회

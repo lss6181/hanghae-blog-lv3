@@ -1,9 +1,7 @@
 package com.sparta.hanghaebloglv3.common.config;
 
 import com.sparta.hanghaebloglv3.common.jwt.JwtUtil;
-import com.sparta.hanghaebloglv3.common.security.JwtAuthenticationFilter;
-import com.sparta.hanghaebloglv3.common.security.JwtAuthorizationFilter;
-import com.sparta.hanghaebloglv3.common.security.UserDetailsServiceImpl;
+import com.sparta.hanghaebloglv3.common.security.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +14,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -32,8 +32,18 @@ public class WebSecurityConfig {
 	}
 
 	@Bean
+	public AuthenticationSuccessHandler successHandler() {
+		return new SuccessLoginHandler();
+	}
+
+	@Bean
+	public AuthenticationFailureHandler failureHandler(){
+		return new FailureLoginHandler();
+	}
+
+	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-		JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+		JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, successHandler(), failureHandler());
 		filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
 		return filter;
 	}
@@ -76,7 +86,7 @@ public class WebSecurityConfig {
 //				);
 
 		// 필터 관리 (필터 사용순서 설정)
-		http.addFilterBefore(jwtAuthorizationFilter(),JwtAuthenticationFilter.class);
+		http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
 		http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();

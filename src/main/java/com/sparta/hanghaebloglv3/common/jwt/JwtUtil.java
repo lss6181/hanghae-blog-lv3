@@ -1,22 +1,34 @@
 package com.sparta.hanghaebloglv3.common.jwt;
 
+import com.sparta.hanghaebloglv3.common.constant.ProjConst;
+import com.sparta.hanghaebloglv3.common.dto.ApiResult;
+import com.sparta.hanghaebloglv3.common.exception.RestApiException;
 import com.sparta.hanghaebloglv3.user.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Locale;
 
 @Slf4j(topic = "JwtUtil")
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
+	private final MessageSource messageSource;
+
 	// Header KEY 값
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	// 사용자 권한 값의 KEY
@@ -57,7 +69,7 @@ public class JwtUtil {
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
 			return bearerToken.substring(7);
 		}
-		return null;
+		return new ApiResult(ProjConst.INVALID_TOKEN, HttpStatus.BAD_REQUEST.value()).toString();
 	}
 
 	// 토큰 검증
